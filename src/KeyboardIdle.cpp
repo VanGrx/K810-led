@@ -10,7 +10,7 @@ KeyboardIdle::KeyboardIdle() {
           qOverload<int, int>(&KIdleTime::timeoutReached), this,
           &KeyboardIdle::timeoutReached);
 
-  setupBacklight(5);
+  setupBacklight(segments);
 
   // register to get informed for the very next user event
   KIdleTime::instance()->catchNextResumeEvent();
@@ -21,15 +21,10 @@ KeyboardIdle::~KeyboardIdle() {}
 void KeyboardIdle::resumeEvent() {
   KIdleTime::instance()->removeAllIdleTimeouts();
 
-  setupBacklight(5);
+  setupBacklight(segments);
 
-  KIdleTime::instance()->addIdleTimeout(1000);
-  KIdleTime::instance()->addIdleTimeout(2000);
-  KIdleTime::instance()->addIdleTimeout(3000);
-  KIdleTime::instance()->addIdleTimeout(4000);
-  KIdleTime::instance()->addIdleTimeout(5000);
-  KIdleTime::instance()->addIdleTimeout(6000);
-  KIdleTime::instance()->addIdleTimeout(7000);
+  for (auto i = 1; i <= segments; i++)
+    KIdleTime::instance()->addIdleTimeout(i * secondsSegment * 1000);
 }
 
 void KeyboardIdle::timeoutReached(int id, int timeout) {
@@ -37,8 +32,9 @@ void KeyboardIdle::timeoutReached(int id, int timeout) {
 
   KIdleTime::instance()->catchNextResumeEvent();
 
-  if (timeout < 7000)
-    setupBacklight(6 - timeout / 1000);
+  if (timeout < segments * secondsSegment * 1000)
+    setupBacklight(((segments - 1) * secondsSegment - timeout / 1000) /
+                   secondsSegment);
   else
     setupCycle();
 }
@@ -48,7 +44,7 @@ void KeyboardIdle::setupBacklight(uint8_t intensity) {
   LedKeyboard kbd;
   initKeyboard(kbd);
 
-  uint8_t colorInt = intensity * segment;
+  uint8_t colorInt = intensity * maxValue / segments;
 
   auto color = LedKeyboard::Color{colorInt, colorInt, colorInt};
 
