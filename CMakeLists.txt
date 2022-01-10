@@ -9,7 +9,8 @@ find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Gui)
 
 set(src_files
     src/main.cpp
-    src/KeyboardIdle.cpp)
+    src/KeyboardIdle.cpp
+    src/KeyboardIdle.h)
 
 add_executable(k810-led ${src_files}) 
 
