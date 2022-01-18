@@ -1,5 +1,4 @@
-#ifndef KEYBOARDIDLE_H
-#define KEYBOARDIDLE_H
+#pragma once
 
 #include <QObject>
 #include <g810-led/Keyboard.h>
@@ -26,4 +25,3 @@ private:
   uint8_t secondsSegment = 5;
 };
 
-#endif /* KEYBOARDIDLE_H */
