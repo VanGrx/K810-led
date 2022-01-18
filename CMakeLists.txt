@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 project(k810-led)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 find_package(KF5IdleTime)
 
 set(REQUIRED_QT_VERSION 5.15.2)
@@ -10,7 +13,11 @@ find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Gui)
 set(src_files
     src/main.cpp
     src/KeyboardIdle.cpp
-    src/KeyboardIdle.h)
+    src/KeyboardIdle.h
+    src/keyboardconfig.cpp
+    src/keyboardconfig.h
+    src/Effect.cpp
+    src/Effect.h)
 
 add_executable(k810-led ${src_files}) 
 

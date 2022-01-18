@@ -1,4 +1,5 @@
 #include "KeyboardIdle.h"
+#include "keyboardconfig.h"
 #include <QDebug>
 #include <kidletime.h>
 
@@ -10,7 +11,7 @@ KeyboardIdle::KeyboardIdle() {
           qOverload<int, int>(&KIdleTime::timeoutReached), this,
           &KeyboardIdle::timeoutReached);
 
-  setupBacklight(segments);
+  setupBacklight(0xFF);
 
   // register to get informed for the very next user event
   KIdleTime::instance()->catchNextResumeEvent();
@@ -21,10 +22,10 @@ KeyboardIdle::~KeyboardIdle() {}
 void KeyboardIdle::resumeEvent() {
   KIdleTime::instance()->removeAllIdleTimeouts();
 
-  setupBacklight(segments);
+  setupBacklight(0xFF);
 
-  for (auto i = 1; i <= segments; i++)
-    KIdleTime::instance()->addIdleTimeout(i * secondsSegment * 1000);
+  for (auto it : KeyboardConfig::GetConfig()->effects)
+    KIdleTime::instance()->addIdleTimeout(it.first);
 }
 
 void KeyboardIdle::timeoutReached(int id, int timeout) {
@@ -32,11 +33,12 @@ void KeyboardIdle::timeoutReached(int id, int timeout) {
 
   KIdleTime::instance()->catchNextResumeEvent();
 
-  if (timeout < segments * secondsSegment * 1000)
-    setupBacklight(((segments - 1) * secondsSegment - timeout / 1000) /
-                   secondsSegment);
+  auto effect = KeyboardConfig::GetConfig()->effects[timeout];
+
+  if (effect.effect == Effect::EffectType::Backlight)
+    setupBacklight(effect.intensity);
   else
-    setupCycle();
+    setupCycle(effect.intensity, effect.breathDuration);
 }
 
 void KeyboardIdle::setupBacklight(uint8_t intensity) {
@@ -44,7 +46,7 @@ void KeyboardIdle::setupBacklight(uint8_t intensity) {
   LedKeyboard kbd;
   initKeyboard(kbd);
 
-  uint8_t colorInt = intensity * maxValue / segments;
+  uint8_t colorInt = intensity;
 
   auto color = LedKeyboard::Color{colorInt, colorInt, colorInt};
 
@@ -56,14 +58,14 @@ void KeyboardIdle::setupBacklight(uint8_t intensity) {
     return;
 }
 
-void KeyboardIdle::setupCycle() {
+void KeyboardIdle::setupCycle(uint8_t intensity, uint8_t duration) {
   LedKeyboard kbd;
   initKeyboard(kbd);
 
   auto nativeEffect = LedKeyboard::NativeEffect::breathing;
   auto nativeEffectPart = LedKeyboard::NativeEffectPart::all;
-  auto color = LedKeyboard::Color{0xFF, 0xFF, 0xFF};
-  auto period = std::chrono::seconds(5);
+  auto color = LedKeyboard::Color{intensity, intensity, intensity};
+  auto period = std::chrono::seconds(duration);
   if (!kbd.open())
     return;
 

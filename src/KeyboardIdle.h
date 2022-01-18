@@ -18,10 +18,6 @@ public Q_SLOTS:
 
 private:
   void setupBacklight(uint8_t intensity);
-  void setupCycle();
+  void setupCycle(uint8_t intensity, uint8_t duration);
   void initKeyboard(LedKeyboard &kbd);
-
-  uint8_t segments = 10;
-  uint8_t secondsSegment = 5;
 };
-
