@@ -8,6 +8,8 @@ class KeyboardConfig {
 private:
   KeyboardConfig();
 
+  const std::string filename = ".k810";
+
 public:
   static std::shared_ptr<KeyboardConfig> GetConfig();
 
