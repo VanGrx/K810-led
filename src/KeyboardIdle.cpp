@@ -11,7 +11,8 @@ KeyboardIdle::KeyboardIdle() {
           qOverload<int, int>(&KIdleTime::timeoutReached), this,
           &KeyboardIdle::timeoutReached);
 
-  setupBacklight(0xFF);
+  for (auto it : KeyboardConfig::GetConfig()->effects)
+    KIdleTime::instance()->addIdleTimeout(it.first);
 
   // register to get informed for the very next user event
   KIdleTime::instance()->catchNextResumeEvent();
