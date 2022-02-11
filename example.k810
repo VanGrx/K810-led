@@ -1,11 +1,11 @@
 #first default
 0 l FF 1 1
 # add for each time separator
-# miliseconds | effect type | max intensity | numerator value | denumerator value 
+# miliseconds | effect type | max intensity | numerator value | denominator value 
 1000                l              FF               4                   5
 2000 l FF 1 5
 3000 l FF 5 5
 4000 l FF 1 5
 # cycle now
-# miliseconds | effect type | max intensity | numerator value | denumerator value | cycle lenght
+# miliseconds | effect type | max intensity | numerator value | denominator value | cycle lenght
      5000           b               FF              1                   1               10

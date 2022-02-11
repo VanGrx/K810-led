@@ -27,15 +27,15 @@ KeyboardConfig::KeyboardConfig() {
     char type;
     int intensity;
     int numerator;
-    int denumerator;
+    int denominator;
     int cycle;
 
     std::stringstream iss(line);
 
     iss >> time >> type >> std::hex >> intensity >> std::dec >> numerator >>
-        denumerator;
+        denominator;
 
-    if (!iss || time < 0 || intensity < 0 || numerator < 1 || denumerator < 1)
+    if (!iss || time < 0 || intensity < 0 || numerator < 1 || denominator < 1)
       continue;
 
     auto effect = Effect::GetEffectType(type);
@@ -48,11 +48,11 @@ KeyboardConfig::KeyboardConfig() {
 
     switch (effect) {
     case Effect::EffectType::Backlight:
-      effects[time] = Effect(effect, intensity * numerator / denumerator);
+      effects[time] = Effect(effect, intensity * numerator / denominator);
       break;
     case Effect::EffectType::Breathing:
       effects[time] =
-          Effect(effect, intensity * numerator / denumerator, cycle);
+          Effect(effect, intensity * numerator / denominator, cycle);
     }
   }
 }
